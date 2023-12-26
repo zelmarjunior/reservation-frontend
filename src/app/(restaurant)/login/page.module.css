@@ -1,0 +1,13 @@
+.login_title {
+    color: black;
+    margin-bottom: '20px';
+}
+
+.icon_button {
+    display: flex;
+    flex-direction: column;
+}
+
+.icon_button > p {
+    font-size: 10px;
+}
