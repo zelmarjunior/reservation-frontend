@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Typography } from '@mui/material';
 import ReservationTable from './components/reservation-table';
 import { AdminContextProvider } from '@/app/contexts/adminContext';
+import ReservationListCard from './components/reservation-list-cards-old';
 
 export default function AdminPainel() {
   return (
@@ -16,6 +17,7 @@ export default function AdminPainel() {
         <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 4, minWidth: 500, width: '60%', justifyContent: 'center', alignItems: 'center', borderRadius: '30px', marginTop: '30px' }}>
           <ReservationTable />
         </Box>
+        <ReservationListCard />
       </Box>
     </AdminContextProvider>
   )

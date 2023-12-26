@@ -5,9 +5,11 @@ interface ReservationContextProvider {
     selectedDate: Date | null
     selectedTime: Date | null,
     selectedSeats: string,
+    showRecommendations: boolean,
     setSelectedDate: React.Dispatch<React.SetStateAction<string | null>>,
     setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>,
-    setSelectedSeats: React.Dispatch<React.SetStateAction<string | null>>
+    setSelectedSeats: React.Dispatch<React.SetStateAction<string | null>>,
+    setShowRecommendations: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
 //Iniciado com null e unefined pois ao renderizar a página o nao tem dados no reservation
@@ -17,6 +19,7 @@ export const ReservationContextProvider: React.FC<{ children: ReactNode }> = ({ 
     const [selectedDate, setSelectedDate] = React.useState<string | null>(null);
     const [selectedTime, setSelectedTime] = React.useState<string | null>(null);
     const [selectedSeats, setSelectedSeats] = React.useState<number | null>(null);
+    const [showRecommendations, setShowRecommendations] = React.useState(false);
 
     const contextValue = {
         selectedDate,
@@ -24,7 +27,9 @@ export const ReservationContextProvider: React.FC<{ children: ReactNode }> = ({ 
         selectedTime,
         setSelectedTime,
         selectedSeats,
-        setSelectedSeats
+        setSelectedSeats,
+        showRecommendations,
+        setShowRecommendations
     };
     return (
         <ReservationContext.Provider value={contextValue}>

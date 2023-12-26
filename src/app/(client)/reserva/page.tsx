@@ -1,13 +1,12 @@
 'use client';
 import * as React from 'react';
-import { ReservationContextProvider, ReservationContext } from '../../contexts/reservationContext';
-import SelectDataAndTime from './components/selectDataAndTime/page';
+import { ReservationContextProvider } from '../../contexts/reservationContext';
+import SelectDataToReservation from './components/select-data-to-reservation/page';
 
 export default function Reservation() {
-
   return (
     <ReservationContextProvider>
-      <SelectDataAndTime />
+      <SelectDataToReservation />
     </ReservationContextProvider>
   )
 }

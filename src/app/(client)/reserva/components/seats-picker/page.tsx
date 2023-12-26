@@ -2,63 +2,30 @@
 import * as React from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import { useRouter } from 'next/navigation';
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
-import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
 import Stack from '@mui/material/Stack';
-import Image from 'next/image'
-import styles from './page.module.css'
-import Divider from '@mui/material/Divider';
-import { FormControl, Input, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { useReservationContext } from '@/app/contexts/reservationContext';
 import ReservationModal from '../reservation-modal';
-import { StaticTimePicker } from '@mui/x-date-pickers/StaticTimePicker';
-
-
-export type UserRole = 'owner' | 'editor' | 'reader';
-
-export interface IUserAdmin {
-  id?: number,
-  username: string,
-  password: string,
-  role: UserRole
-}
-
-
-export interface IUserCustomer {
-  id?: number,
-  username: string,
-  phone: number
-}
 
 export default function TimePickerButtons() {
   const [open, setOpen] = React.useState(false);
-  const { selectedDate, setSelectedDate, selectedTime, setSelectedTime, selectedSeats, setSelectedSeats } = useReservationContext();
+  const { selectedDate, setSelectedDate, selectedTime, setSelectedTime, selectedSeats, setSelectedSeats, showRecommendations, setShowRecommendations} = useReservationContext();
   const [confirmation, setConfirmation] = React.useState(false);
   const [times, setTimes] = React.useState([]);
+  const router = useRouter();
 
   const handleChange = (event: SelectChangeEvent) => {
     setSelectedSeats(event.target.value)
   };
 
-  const router = useRouter();
-
-  const handleOpen = (e) => {
-    console.log('Horário Selecionado: ', e.target.textContent)
-    setOpen(true);
-    setSelectedTime(e.target.textContent);
-  };
-
-  const API_URL = "http://localhost:3333/reservation/availability";
+  const AVAILABILITY_API_URL = "http://localhost:3333/reservation/availability";
 
   const verifyAvailability = async () => {
-
-    const response = await fetch(API_URL, {
+    console.log(process.env.AVAILABILITY_API_URL);
+    
+    const response = await fetch(process.env.AVAILABILITY_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -73,7 +40,14 @@ export default function TimePickerButtons() {
 
     if (response.ok) {
       const data = await response.json();
-      setConfirmation(data)
+
+      if (data.isAvailability) {
+        setConfirmation(true);
+      } else {
+        setShowRecommendations(true)
+        console.log('sadas');
+        
+      }
     } else {
       throw new Error(response.statusText);
     }
