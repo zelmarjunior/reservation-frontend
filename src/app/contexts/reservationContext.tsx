@@ -1,15 +1,26 @@
 import React, { createContext, useContext, ReactNode, SetStateAction } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 
+export type TRecommendations = {
+    time: string,
+    total_seats: string
+}
+
 interface ReservationContextProvider {
     selectedDate: Date | null
     selectedTime: Date | null,
     selectedSeats: string,
     showRecommendations: boolean,
+    recommendationLists: TRecommendations[]
+    recommendationLessBusy: TRecommendations[]
+    recommendationNearest: TRecommendations[]
     setSelectedDate: React.Dispatch<React.SetStateAction<string | null>>,
     setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>,
     setSelectedSeats: React.Dispatch<React.SetStateAction<string | null>>,
     setShowRecommendations: React.Dispatch<React.SetStateAction<boolean>>,
+    setRecommendationLists: React.Dispatch<React.SetStateAction<TRecommendations[]>>,
+    setRecommendationLessBusy: React.Dispatch<React.SetStateAction<TRecommendations[]>>,
+    setRecommendationNearest: React.Dispatch<React.SetStateAction<TRecommendations[]>>,
 }
 
 //Iniciado com null e unefined pois ao renderizar a página o nao tem dados no reservation
@@ -18,8 +29,11 @@ export const ReservationContext = createContext<ReservationContextProvider | nul
 export const ReservationContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [selectedDate, setSelectedDate] = React.useState<string | null>(null);
     const [selectedTime, setSelectedTime] = React.useState<string | null>(null);
-    const [selectedSeats, setSelectedSeats] = React.useState<number | null>(null);
+    const [selectedSeats, setSelectedSeats] = React.useState<number | null>(1);
     const [showRecommendations, setShowRecommendations] = React.useState(false);
+    const [recommendationLists, setRecommendationLists] = React.useState<TRecommendations[]>([]);
+    const [recommendationLessBusy, setRecommendationLessBusy] = React.useState<TRecommendations[]>([]);
+    const [recommendationNearest, setRecommendationNearest] = React.useState<TRecommendations[]>([]);
 
     const contextValue = {
         selectedDate,
@@ -29,7 +43,13 @@ export const ReservationContextProvider: React.FC<{ children: ReactNode }> = ({ 
         selectedSeats,
         setSelectedSeats,
         showRecommendations,
-        setShowRecommendations
+        setShowRecommendations,
+        recommendationLists,
+        setRecommendationLists,
+        recommendationLessBusy,
+        setRecommendationLessBusy,
+        recommendationNearest,
+        setRecommendationNearest
     };
     return (
         <ReservationContext.Provider value={contextValue}>

@@ -71,7 +71,7 @@ export default function TimePicker() {
   const renderTimeButtons = () => {
     console.log('renderbuttons', times)
     return (times.map((time) => {
-      return <Button onClick={handleOpen} color='success' variant="outlined" disabled={time.total_reservations > 10}>{time.reservation_time}</Button>
+      return <Button key={React.useId()} onClick={handleOpen} color='success' variant="outlined" disabled={time.total_reservations > 10}>{time.reservation_time}</Button>
     }))
   }
 

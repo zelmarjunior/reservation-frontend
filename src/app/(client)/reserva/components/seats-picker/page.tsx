@@ -25,7 +25,7 @@ export default function TimePickerButtons() {
   const verifyAvailability = async () => {
     console.log(process.env.AVAILABILITY_API_URL);
     
-    const response = await fetch(process.env.AVAILABILITY_API_URL, {
+    const response = await fetch("http://localhost:3333/reservation/availability", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -44,8 +44,7 @@ export default function TimePickerButtons() {
       if (data.isAvailability) {
         setConfirmation(true);
       } else {
-        setShowRecommendations(true)
-        console.log('sadas');
+        setShowRecommendations(true);
         
       }
     } else {

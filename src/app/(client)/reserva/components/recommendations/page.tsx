@@ -38,7 +38,7 @@ export interface IUserCustomer {
 
 export default function Recommendations() {
   const [open, setOpen] = React.useState(false);
-  const { selectedDate, setSelectedDate, selectedTime, setSelectedTime } = useReservationContext();
+  const { selectedDate, setSelectedDate, selectedTime, setSelectedTime, selectedSeats, setRecommendationLists, recommendationLessBusy, setRecommendationLessBusy, recommendationNearest, setRecommendationNearest } = useReservationContext();
   const [confirmation, setConfirmation] = React.useState(false);
   const [times, setTimes] = React.useState([]);
 
@@ -50,11 +50,9 @@ export default function Recommendations() {
     setSelectedTime(e.target.textContent);
   };
 
-/*   const API_URL = "http://localhost:3333/reservation/getTimes";
+  const API_URL = "http://localhost:3333/reservation/recommendations";
 
-  const getTimes = async (selectedDate) => {
-    console.log("inicia getTimes", selectedDate)
-
+  const getRecommendations = async () => {
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
@@ -62,44 +60,68 @@ export default function Recommendations() {
       },
       body: JSON.stringify({
         date: selectedDate,
+        time: selectedTime,
+        seats: selectedSeats,
         restaurantId: 1
       })
     });
 
     if (response.ok) {
       const data = await response.json();
-      setTimes(data.times);
-      console.log('Response Data', data)
-      console.log('Horarios para renderizar', times)
+
+      console.log('zelmaaaaar aNTES', recommendationLessBusy);
+      setRecommendationLessBusy(data.lessBusyTimesRecommendation);
+      setRecommendationNearest(data.lessBusyTimesRecommendation)
+      console.log('zelmaaaaar DEPOS', recommendationLessBusy);
     } else {
       throw new Error(response.statusText);
     }
+
   };
 
   React.useEffect(() => {
-    getTimes(selectedDate);
-  }, []) */
-
-  React.useEffect(() => {
-    console.log('mudou o times');
-
-  }, [times])
+    getRecommendations();
+  }, [])
 
   const listTimes = ['11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00']
 
-  const renderTimeButtons = () => {
-    console.log('renderbuttons', times)
-    return (listTimes.map((time) => {
-      return <Button onClick={handleOpen} color='success' variant="outlined" disabled={false}>{time}</Button>
+  const renderLessBusy = () => {
+    console.log('renderbuttons', recommendationLessBusy)
+    return (recommendationLessBusy.map((time) => {
+      return <Button key={React.useId()} onClick={handleOpen} color='success' variant="outlined" disabled={false}>{time}</Button>
     }))
   }
+
+  const renderNearest = () => {
+    console.log('renderbuttons', times)
+    return (recommendationNearest.map((time) => {
+      return <Button key={React.useId()} onClick={handleOpen} color='success' variant="outlined" disabled={false}>{time}</Button>
+    }))
+  }
+
+  React.useEffect(() => {
+    console.log('www', recommendationLessBusy);
+  }, [recommendationLessBusy]);
+
+  const get = () => {
+    const id = React.useId();
+    return id;
+  }
+
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', minWidth: 300, width: '100%', justifyContent: 'center', alignItems: 'center', borderRadius: '30px', marginTop: '30px' }}>
       <Stack direction="row" spacing={2} useFlexGap={true} sx={{ padding: '30px', backgroundColor: '#f6f6f6', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', minWidth: 350, maxWidth: 350, justifyContent: 'space-evenly', alignItems: 'center', borderRadius: '30px', marginTop: '30px' }}>
         <h2 style={{ color: 'black', paddingBottom: '10px', textAlign: 'center' }}>O horário escolhido não está disponível 😒</h2>
         <h5 style={{ color: 'black', paddingBottom: '30px', textAlign: 'center' }}>Veja sugestões especiais para você!</h5>
-        {renderTimeButtons()}
+        {recommendationLessBusy && recommendationLessBusy?.map((time, index) => {
+          return <Button key={index} onClick={handleOpen} color='success' variant="outlined" disabled={false}>natalina</Button>
+        })}
+        <hr />
+        <h5 style={{ color: 'black', paddingBottom: '30px', textAlign: 'center' }}>Veja sugestões especiais para você!</h5>
+{/*         {recommendationNearest && recommendationNearest?.map((time) => {
+          return <Button key={React.useId()} onClick={handleOpen} color='success' variant="outlined" disabled={false}>{natalina}</Button>
+        })} */}
       </Stack>
       <ReservationModal open={open} setOpen={setOpen} />
     </Box>

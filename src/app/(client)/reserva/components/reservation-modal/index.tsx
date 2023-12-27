@@ -6,11 +6,14 @@ import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import { TextField } from '@mui/material';
 import { useReservationContext } from '@/app/contexts/reservationContext';
+import VerifiedIcon from '@mui/icons-material/Verified';
 
 export default function ReservationModal(props) {
   const { open, setOpen } = props;
-  const { selectedDate, setSelectedDate, selectedTime, setSelectedTime } = useReservationContext();
+  const { selectedDate, setSelectedDate, selectedTime, setSelectedTime, selectedSeats} = useReservationContext();
   const [confirmation, setConfirmation] = React.useState(false);
+  const [name, setName] = React.useState();
+  const [phone, setPhone] = React.useState();
   const router = useRouter();
 
   const handleClose = () => {
@@ -19,40 +22,41 @@ export default function ReservationModal(props) {
   };
   const API_URL = "http://localhost:3333/reservation/create";
 
-  const createReservation = async (selectedDate, selectedTime) => {
-    console.log("inicia getTimes", selectedDate, selectedTime)
-
+  const createReservation = async () => {
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        date: selectedDate,
-        restaurantId: 1
+        date: selectedDate, 
+        time: selectedTime, 
+        seats: selectedSeats, 
+        restaurantId: 1,
+        userCustomerId: 1
       })
     });
 
     if (response.ok) {
-      const data = await response.json();
-      setTimes(data.times);
-      console.log('Response Data', data)
-      console.log('Horarios para renderizar', times)
+      const data = await response.json();      
     } else {
       throw new Error(response.statusText);
     }
   };
 
-  const handleReservation = () => {
-
+  const handleReservation = async () => {
+    await createReservation();
     setConfirmation(true);
+    
     setTimeout(() => {
       setSelectedTime('');
       setConfirmation(false);
       setOpen(false);
       router.push('/');
-    }, 5000);
+    }, 2000);
   }
+
+
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', minWidth: 300, width: '100%', justifyContent: 'center', alignItems: 'center', borderRadius: '30px', marginTop: '30px' }}>
@@ -77,15 +81,19 @@ export default function ReservationModal(props) {
           gap: 1
         }}>
           {confirmation ? (
-            <h1>Reserva realizada!</h1>
+            <>
+              <h1>Reserva realizada com sucesso!</h1>
+              <VerifiedIcon color='success' fontSize='large' />
+            </>
           ) : (
             <>
-              <h1>Reserva</h1>
-              <h3 style={{ color: 'black' }}>{selectedTime}</h3>
-              <TextField label="Nome" variant="outlined" />
-              <TextField label="Telefone" variant="outlined" />
-              <TextField label="Lugares" variant="outlined" />
-              <Button onClick={handleReservation} variant="contained">Reservar</Button>
+              <h2 style={{ color: 'black', textAlign: 'center' }}>Confirme os dados para sua reserva!</h2>
+              <h5 style={{ color: 'black' }}>Reserva para:</h5>
+              <h4 style={{ color: 'black' }}>Dia: {selectedDate}</h4>
+              <h4 style={{ color: 'black' }}>Hora: {selectedTime}</h4>
+              <TextField label="Nome" variant="outlined" onChange={(event) => setName(event)} />
+              <TextField label="Telefone" variant="outlined" onChange={(event) => setPhone(event)} />
+              <Button onClick={() => handleReservation()} variant="contained">Confirmar Reserva!</Button>
             </>
           )}
         </Box>

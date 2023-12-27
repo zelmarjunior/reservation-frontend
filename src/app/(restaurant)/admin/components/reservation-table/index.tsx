@@ -319,7 +319,7 @@ export default function ReservationTable() {
     console.log('macadamiadasd', reservations)  
     getTimes('2023-12-26');
     console.log('macadamia', reservations)  
-  }, [])
+  }, [reservations])
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -383,7 +383,7 @@ export default function ReservationTable() {
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage,
       ),
-    [order, orderBy, page, rowsPerPage],
+    [order, orderBy, page, rowsPerPage, reservations],
   );
 
   return (
