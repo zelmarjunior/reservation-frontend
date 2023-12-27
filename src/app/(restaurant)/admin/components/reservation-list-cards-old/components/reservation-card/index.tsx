@@ -5,8 +5,8 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { Stack } from '@mui/material';
 import { useAdminContext } from '@/app/contexts/adminContext';
+import { useRouter } from 'next/navigation';
 
 export interface ReservationInfo {
   reservation_date: string,
@@ -18,47 +18,12 @@ export interface ReservationInfo {
   user_customer_username: string,
 }
 
-export default function ReserationCard({ reservationInfo }: { reservationInfo: ReservationInfo }) {
-  
-
-  const {setOnDeleteReservation, setSelectedDateViewer, selectedDateToViewReservation} = useAdminContext();
-  const API_URL_DELET = "http://localhost:3333/reservation/delete";
-  console.log(process.env.NEXT_PUBLIC_ANEVAILABILITY_API_URL);
-
-  const API_URL = "http://localhost:3333/reservation/list";
-
-  const getTimes = async () => {
-    console.log('data do inciio do role', selectedDateToViewReservation);
-    let formattedDate = '';
-    if (selectedDateToViewReservation === null) {
-      formattedDate = new Date().toLocaleDateString('pt-br', { year: "numeric", month: "numeric", day: "numeric" });
-      setSelectedDateViewer(formattedDate);
-    } else {
-      setSelectedDateViewer(selectedDateToViewReservation);
-    }
-
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        date: selectedDateToViewReservation || formattedDate,
-        restaurantId: 1
-      })
-    });
-
-    if (response.ok) {
-      const reservationObject = await response.json();
-      setReservations(reservationObject);
-      console.log(reservationObject)
-    } else {
-      throw new Error(response.statusText);
-    }
-  };
+export default function ReserationCard({ reservationInfo }: { reservationInfo: ReservationInfo }, setReservations) {
+  const { setOnDeleteReservation, setSelectedDateViewer, selectedDateToViewReservation, onDeleteReservation} = useAdminContext();
+  const router = useRouter();
 
   const deleteReservation = async (id) => {
-    const response = await fetch(API_URL, {
+    const response = await fetch(process.env.NEXT_PUBLIC_API_URL_DELETE_RESERVATION, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -68,6 +33,8 @@ export default function ReserationCard({ reservationInfo }: { reservationInfo: R
         restaurantId: 1
       })
     });
+
+   router.push('/admin')
   };
 
   const handleDeleteReservation = async (id) => {

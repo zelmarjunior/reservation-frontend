@@ -7,11 +7,8 @@ import { useReservationContext } from '../../../../contexts/reservationContext';
 import Recommendations from '../recommendations/page';
 
 export default function SelectDataToReservation() {
-  const { selectedDate, selectedTime, selectedSeats, showRecommendations, setShowRecommendations} = useReservationContext();
-  React.useEffect(() => {
-    console.log(selectedDate, selectedTime, selectedSeats, showRecommendations);
-    
-  }, [selectedDate, selectedTime, selectedSeats, showRecommendations])
+  const { selectedDate, selectedTime, selectedSeats, showRecommendations} = useReservationContext();
+
   return (
     <>
       {!selectedDate && !showRecommendations && <DatePicker />}

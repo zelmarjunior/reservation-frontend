@@ -20,10 +20,10 @@ export default function ReservationModal(props) {
     setSelectedTime('');
     setOpen(false)
   };
-  const API_URL = "http://localhost:3333/reservation/create";
+  const NEXT_PUBLIC_API_URL_CREATE_RESERVATION = "http://localhost:3333/reservation/create";
 
   const createReservation = async () => {
-    const response = await fetch(API_URL, {
+    const response = await fetch(NEXT_PUBLIC_API_URL_CREATE_RESERVATION, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -44,38 +44,6 @@ export default function ReservationModal(props) {
     }
   };
 
-  const AVAILABILITY_API_URL = "http://localhost:3333/reservation/availability";
-
-  const verifyAvailability = async () => {
-    console.log(process.env.AVAILABILITY_API_URL);
-
-    const response = await fetch("http://localhost:3333/reservation/availability", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        date: selectedDate,
-        time: selectedTime,
-        seats: selectedSeats,
-        restaurantId: 1
-      })
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-
-      if (data.isAvailability) {
-        setConfirmation(true);
-      } else {
-        //setShowRecommendations(true);
-      }
-    } else {
-      throw new Error(response.statusText);
-    }
-  };
-
-
   const handleReservation = async () => {
     await createReservation();
     setConfirmation(true);
@@ -86,9 +54,7 @@ export default function ReservationModal(props) {
       setOpen(false);
       router.push('/');
     }, 3000);
-  }
-
-
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', minWidth: 300, width: '90%%', justifyContent: 'center', alignItems: 'center', borderRadius: '30px', marginTop: '30px' }}>
@@ -128,7 +94,7 @@ export default function ReservationModal(props) {
               <h5 style={{ color: 'black' }}>Reserva para:</h5>
               <h4 style={{ color: 'black' }}>Dia: {String(selectedDate)}</h4>
               <h4 style={{ color: 'black' }}>Hora: {String(selectedTime)}</h4>
-              <TextField label="Nome" variant="outlined" onChange={(event) => setName(event)} />
+              <TextField label="Nome" variant="outlined" onChange={(event) => setName(event)} sx={{paddingBottom: '10px'}} />
               <TextField label="Telefone" variant="outlined" onChange={(event) => setPhone(event)} />
               <Button onClick={() => handleReservation()} variant="contained">Confirmar Reserva!</Button>
             </>

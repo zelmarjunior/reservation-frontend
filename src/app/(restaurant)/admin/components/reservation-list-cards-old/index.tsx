@@ -13,11 +13,9 @@ import { CalendarIcon } from '@mui/x-date-pickers';
 import { useRouter } from 'next/navigation';
 
 export default function ReservationListCard() {
-
-  const [reservations, setReservations] = React.useState(null);
-
-  const { selectedDateToViewReservation, setSelectedDateToViewReservation, onDeleteReservation, selectedDateViewer, setSelectedDateViewer} = useAdminContext();
+  const { selectedDateToViewReservation, setSelectedDateToViewReservation, onDeleteReservation, selectedDateViewer, setSelectedDateViewer } = useAdminContext();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const [reservations, setReservations] = React.useState(null);
   const router = useRouter();
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -28,10 +26,8 @@ export default function ReservationListCard() {
     setAnchorEl(null);
   };
 
-  const API_URL = "http://localhost:3333/reservation/list";
 
   const getTimes = async () => {
-    console.log('data do inciio do role', selectedDateToViewReservation);
     let formattedDate = '';
     if (selectedDateToViewReservation === null) {
       formattedDate = new Date().toLocaleDateString('pt-br', { year: "numeric", month: "numeric", day: "numeric" });
@@ -39,8 +35,8 @@ export default function ReservationListCard() {
     } else {
       setSelectedDateViewer(selectedDateToViewReservation);
     }
-
-    const response = await fetch(API_URL, {
+    const NEXT_PUBLIC_API_URL_RESERVATION_LIST = "http://localhost:3333/reservation/list";
+    const response = await fetch(NEXT_PUBLIC_API_URL_RESERVATION_LIST, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -54,22 +50,17 @@ export default function ReservationListCard() {
     if (response.ok) {
       const reservationObject = await response.json();
       setReservations(reservationObject);
-      console.log(reservationObject)
     } else {
       throw new Error(response.statusText);
     }
   };
-
 
   React.useEffect(() => {
     getTimes();
   }, [selectedDateToViewReservation]);
 
   const handleSelectedDate = (event) => {
-    console.log(event);
     const newDate = new Date(event.$d).toLocaleDateString('pt-br', { year: "numeric", month: "numeric", day: "numeric" });
-    console.log('oiiiiiiiiii', newDate);
-
     setSelectedDateToViewReservation(String(newDate));
   }
 

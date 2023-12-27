@@ -20,12 +20,11 @@ export default function TimePickerButtons() {
     setSelectedSeats(event.target.value)
   };
 
-  const AVAILABILITY_API_URL = "http://localhost:3333/reservation/availability";
+  const NEXT_PUBLIC_AVAILABILITY_API_URL = "http://localhost:3333/reservation/availability";// PROBLEMAS COM DOT ENV
 
   const verifyAvailability = async () => {
-    console.log(process.env.AVAILABILITY_API_URL);
     
-    const response = await fetch("http://localhost:3333/reservation/availability", {
+    const response = await fetch(NEXT_PUBLIC_AVAILABILITY_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -51,23 +50,11 @@ export default function TimePickerButtons() {
     }
   };
 
-
-
-  const listTimes = ['11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00'];
-  const listSeats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-  const renderSeatOptions = () => {
-    console.log('renderbuttons', times)
-    return (listSeats.map((seat, index) => {
-      return <MenuItem value={seat[index]}>{seat[index]}</MenuItem>
-    }))
-  }
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', minWidth: 300, width: '100%', justifyContent: 'center', alignItems: 'center', borderRadius: '30px', marginTop: '30px' }}>
       <Stack direction="row" spacing={2} useFlexGap={true} sx={{ padding: '30px', backgroundColor: '#f6f6f6', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', minWidth: 350, maxWidth: 350, justifyContent: 'space-evenly', alignItems: 'center', borderRadius: '30px', marginTop: '30px' }}>
-        <h2 style={{ color: 'black', paddingBottom: '30px', textAlign: 'center' }}>Quantos lugares seria?</h2>
-        <FormControl sx={{ width: '120px' }}>
+        <h2 style={{ color: 'black', paddingBottom: '30px', textAlign: 'center' }}>Quantos lugares você gostaria? 🪑</h2>
+        <FormControl sx={{ width: '80%' }}>
           <InputLabel id="seats">Lugares</InputLabel>
           <Select
             labelId="seats"
@@ -89,7 +76,7 @@ export default function TimePickerButtons() {
             <MenuItem value={'Mais lugares'} disabled>Mais? Entre em contato</MenuItem>
           </Select>
         </FormControl>
-        <Button onClick={verifyAvailability} color='success' variant="outlined" disabled={false} sx={{ fontSize: '12px' }}>Verificar Disponibilidade</Button>
+        <Button style={{width: '80%'}} onClick={verifyAvailability} color='success' variant="outlined" disabled={false} sx={{ fontSize: '12px' }}>Verificar Disponibilidade</Button>
       </Stack>
       <ReservationModal open={confirmation} setOpen={setConfirmation} />
     </Box>
