@@ -14,6 +14,7 @@ interface ReservationContextProvider {
     recommendationLists: TRecommendations[]
     recommendationLessBusy: TRecommendations[]
     recommendationNearest: TRecommendations[]
+    recommendationsByHistory: TRecommendations[]
     setSelectedDate: React.Dispatch<React.SetStateAction<string | null>>,
     setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>,
     setSelectedSeats: React.Dispatch<React.SetStateAction<string | null>>,
@@ -21,6 +22,7 @@ interface ReservationContextProvider {
     setRecommendationLists: React.Dispatch<React.SetStateAction<TRecommendations[]>>,
     setRecommendationLessBusy: React.Dispatch<React.SetStateAction<TRecommendations[]>>,
     setRecommendationNearest: React.Dispatch<React.SetStateAction<TRecommendations[]>>,
+    setRecommendationsByHistory: React.Dispatch<React.SetStateAction<TRecommendations[]>>,
 }
 
 //Iniciado com null e unefined pois ao renderizar a página o nao tem dados no reservation
@@ -34,6 +36,7 @@ export const ReservationContextProvider: React.FC<{ children: ReactNode }> = ({ 
     const [recommendationLists, setRecommendationLists] = React.useState<TRecommendations[]>([]);
     const [recommendationLessBusy, setRecommendationLessBusy] = React.useState<TRecommendations[]>([]);
     const [recommendationNearest, setRecommendationNearest] = React.useState<TRecommendations[]>([]);
+    const [recommendationsByHistory, setRecommendationsByHistory] = React.useState<TRecommendations[]>([]);
 
     const contextValue = {
         selectedDate,
@@ -49,8 +52,11 @@ export const ReservationContextProvider: React.FC<{ children: ReactNode }> = ({ 
         recommendationLessBusy,
         setRecommendationLessBusy,
         recommendationNearest,
-        setRecommendationNearest
+        setRecommendationNearest,
+        recommendationsByHistory,
+        setRecommendationsByHistory
     };
+
     return (
         <ReservationContext.Provider value={contextValue}>
             {children}

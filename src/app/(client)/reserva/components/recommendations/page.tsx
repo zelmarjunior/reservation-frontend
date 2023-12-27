@@ -38,7 +38,7 @@ export interface IUserCustomer {
 
 export default function Recommendations() {
   const [open, setOpen] = React.useState(false);
-  const { selectedDate, setSelectedDate, selectedTime, setSelectedTime, selectedSeats, setRecommendationLists, recommendationLessBusy, setRecommendationLessBusy, recommendationNearest, setRecommendationNearest } = useReservationContext();
+  const { selectedDate, setSelectedDate, selectedTime, setSelectedTime, selectedSeats, setRecommendationLists, setShowRecommendations, recommendationLessBusy, setRecommendationLessBusy, recommendationNearest, setRecommendationNearest, setSelectedSeats, showRecommendations, recommendationsByHistory, setRecommendationsByHistory } = useReservationContext();
   const [confirmation, setConfirmation] = React.useState(false);
   const [times, setTimes] = React.useState([]);
 
@@ -46,7 +46,7 @@ export default function Recommendations() {
 
   const handleOpen = (e) => {
     console.log('Horário Selecionado: ', e.target.textContent)
-    //setOpen(true);
+    setOpen(true);
     setSelectedTime(e.target.textContent);
   };
 
@@ -68,15 +68,15 @@ export default function Recommendations() {
 
     if (response.ok) {
       const data = await response.json();
+      console.log('ai caralho', data);
 
-      console.log('zelmaaaaar aNTES', recommendationLessBusy);
-      setRecommendationLessBusy(data.lessBusyTimesRecommendation);
-      setRecommendationNearest(data.lessBusyTimesRecommendation)
-      console.log('zelmaaaaar DEPOS', recommendationLessBusy);
+      setRecommendationNearest(data[0].nearestRecommendation)
+      setRecommendationLessBusy(data[0].lessBusyTimeRecommendation)
+      setRecommendationsByHistory(data[0].historyByTimeRecommendation)
+
     } else {
       throw new Error(response.statusText);
     }
-
   };
 
   React.useEffect(() => {
@@ -85,23 +85,51 @@ export default function Recommendations() {
 
   const listTimes = ['11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00']
 
-  const renderLessBusy = () => {
-    console.log('renderbuttons', recommendationLessBusy)
-    return (recommendationLessBusy.map((time) => {
-      return <Button key={React.useId()} onClick={handleOpen} color='success' variant="outlined" disabled={false}>{time}</Button>
-    }))
-  }
+  /*   const renderLessBusy = () => {
+      console.log('renderbuttons', recommendationLessBusy)
+      return (recommendationLessBusy.map((time) => {
+        return <Button key={React.useId()} onClick={handleOpen} color='success' variant="outlined" disabled={false}>{time}</Button>
+      }))
+    }
+  
+    const renderNearest = () => {
+      return (recommendationNearest.map((time) => {
+        return <Button key={React.useId()} onClick={handleOpen} color='success' variant="outlined" disabled={false}>{time}</Button>
+      }))
+    } */
+  const AVAILABILITY_API_URL = "http://localhost:3333/reservation/availability";
 
-  const renderNearest = () => {
-    console.log('renderbuttons', times)
-    return (recommendationNearest.map((time) => {
-      return <Button key={React.useId()} onClick={handleOpen} color='success' variant="outlined" disabled={false}>{time}</Button>
-    }))
-  }
+  const verifyAvailability = async () => {
+    console.log(process.env.AVAILABILITY_API_URL);
 
+    const response = await fetch("http://localhost:3333/reservation/availability", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        date: selectedDate,
+        time: selectedTime,
+        seats: selectedSeats,
+        restaurantId: 1
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+
+      if (data.isAvailability) {
+        setConfirmation(true);
+      } else {
+        setShowRecommendations(true);
+      }
+    } else {
+      throw new Error(response.statusText);
+    }
+  };
   React.useEffect(() => {
-    console.log('www', recommendationLessBusy);
-  }, [recommendationLessBusy]);
+    console.log('www', times);
+  }, [times]);
 
   const get = () => {
     const id = React.useId();
@@ -111,17 +139,38 @@ export default function Recommendations() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', minWidth: 300, width: '100%', justifyContent: 'center', alignItems: 'center', borderRadius: '30px', marginTop: '30px' }}>
-      <Stack direction="row" spacing={2} useFlexGap={true} sx={{ padding: '30px', backgroundColor: '#f6f6f6', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', minWidth: 350, maxWidth: 350, justifyContent: 'space-evenly', alignItems: 'center', borderRadius: '30px', marginTop: '30px' }}>
-        <h2 style={{ color: 'black', paddingBottom: '10px', textAlign: 'center' }}>O horário escolhido não está disponível 😒</h2>
-        <h5 style={{ color: 'black', paddingBottom: '30px', textAlign: 'center' }}>Veja sugestões especiais para você!</h5>
-        {recommendationLessBusy && recommendationLessBusy?.map((time, index) => {
-          return <Button key={index} onClick={handleOpen} color='success' variant="outlined" disabled={false}>natalina</Button>
+      <Stack direction="row" spacing={2} useFlexGap={true} sx={{ padding: '30px', backgroundColor: '#f6f6f6', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', minWidth: 350, maxWidth: 350, justifyContent: 'center', alignItems: 'center', borderRadius: '30px', marginTop: '30px' }}>
+        <h3 style={{ color: 'black', paddingBottom: '10px', textAlign: 'center' }}>O horário não está disponível para {selectedSeats} pessoas... 😒</h3>
+        <h5 style={{ color: 'black', paddingBottom: '10px', textAlign: 'center' }}>Dia: {String(selectedDate)}</h5>
+        <h5 style={{ color: 'black', paddingBottom: '10px', textAlign: 'center' }}>Horário: {String(selectedTime)}</h5>
+        <h5 style={{ color: 'black', paddingBottom: '10px', textAlign: 'center' }}>Veja sugestões especiais para você!</h5>
+        {recommendationLessBusy && recommendationLessBusy?.map((item, index) => {
+          if (item?.time) {
+            return <Button key={index} onClick={handleOpen} color='success' variant="outlined" disabled={false}>{item?.time}</Button>
+          }
         })}
-        <hr />
-        <h5 style={{ color: 'black', paddingBottom: '30px', textAlign: 'center' }}>Veja sugestões especiais para você!</h5>
-{/*         {recommendationNearest && recommendationNearest?.map((time) => {
-          return <Button key={React.useId()} onClick={handleOpen} color='success' variant="outlined" disabled={false}>{natalina}</Button>
-        })} */}
+        <br />
+        <h5 style={{ color: 'black', paddingBottom: '10px', textAlign: 'center' }}>Segestões mais próximas ao seu horário...</h5>
+        {recommendationNearest && recommendationNearest?.map((item, index) => {
+          if (item?.time) {
+            return <Button key={index} onClick={handleOpen} color='success' variant="outlined" disabled={false}>{item?.time}</Button>
+          }
+        })}
+        <h5 style={{ color: 'black', paddingBottom: '10px', textAlign: 'center' }}>Veja também: Horários com menos ocupação</h5>
+        {recommendationsByHistory && recommendationsByHistory?.map((item, index) => {
+          if (item?.time) {
+            return <Button key={index} onClick={handleOpen} color='success' variant="outlined" disabled={false}>{item?.time}</Button>
+          }
+        })}
+        <Button onClick={() => {
+          setSelectedDate('');
+          setSelectedTime('');
+          setSelectedSeats('');
+          setShowRecommendations(false);
+        }} aria-label="fingerprint" color="success">
+          <p>🔙 Escolher outro dia</p>
+        </Button>
+        {/* <Button onClick={verifyAvailability} color='success' variant="outlined" disabled={false} sx={{ fontSize: '12px' }}>Verificar Disponibilidade</Button> */}
       </Stack>
       <ReservationModal open={open} setOpen={setOpen} />
     </Box>

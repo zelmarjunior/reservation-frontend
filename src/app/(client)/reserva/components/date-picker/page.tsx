@@ -12,6 +12,8 @@ export default function DatePicker() {
   const { selectedDate, setSelectedDate } = useReservationContext();
 
   const handleselectedDate = (date: any) => {
+    console.log('malucoooooooooo', date);
+    
     const newDate = new Date(date).toLocaleDateString('pt-br', {year: "numeric", month: "numeric", day: "numeric"});
     setSelectedDate(newDate);
   }
@@ -27,9 +29,12 @@ export default function DatePicker() {
           orientation="landscape"
           disablePast={true}
           defaultValue={dayjs(Date())}
-          onAccept={((date) => {
-            handleselectedDate(date);
-          })}
+          onChange={(date) => {handleselectedDate(date);
+          }}
+          onAccept={(date) => {
+/*             console.log('vamooooo', date)
+            handleselectedDate(date); */
+          }}
           sx={{ color: '#0009' }}
         />
       </LocalizationProvider>

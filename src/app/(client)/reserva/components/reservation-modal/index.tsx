@@ -4,13 +4,13 @@ import { useRouter } from 'next/navigation';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
-import { TextField } from '@mui/material';
+import { Stack, TextField } from '@mui/material';
 import { useReservationContext } from '@/app/contexts/reservationContext';
 import VerifiedIcon from '@mui/icons-material/Verified';
 
 export default function ReservationModal(props) {
   const { open, setOpen } = props;
-  const { selectedDate, setSelectedDate, selectedTime, setSelectedTime, selectedSeats} = useReservationContext();
+  const { selectedDate, setSelectedDate, selectedTime, setSelectedTime, selectedSeats } = useReservationContext();
   const [confirmation, setConfirmation] = React.useState(false);
   const [name, setName] = React.useState();
   const [phone, setPhone] = React.useState();
@@ -29,31 +29,63 @@ export default function ReservationModal(props) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        date: selectedDate, 
-        time: selectedTime, 
-        seats: selectedSeats, 
+        date: selectedDate,
+        time: selectedTime,
+        seats: selectedSeats,
         restaurantId: 1,
         userCustomerId: 1
       })
     });
 
     if (response.ok) {
-      const data = await response.json();      
+      const data = await response.json();
     } else {
       throw new Error(response.statusText);
     }
   };
 
+  const AVAILABILITY_API_URL = "http://localhost:3333/reservation/availability";
+
+  const verifyAvailability = async () => {
+    console.log(process.env.AVAILABILITY_API_URL);
+
+    const response = await fetch("http://localhost:3333/reservation/availability", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        date: selectedDate,
+        time: selectedTime,
+        seats: selectedSeats,
+        restaurantId: 1
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+
+      if (data.isAvailability) {
+        setConfirmation(true);
+      } else {
+        //setShowRecommendations(true);
+      }
+    } else {
+      throw new Error(response.statusText);
+    }
+  };
+
+
   const handleReservation = async () => {
     await createReservation();
     setConfirmation(true);
-    
+
     setTimeout(() => {
       setSelectedTime('');
       setConfirmation(false);
       setOpen(false);
       router.push('/');
-    }, 2000);
+    }, 3000);
   }
 
 
@@ -82,15 +114,20 @@ export default function ReservationModal(props) {
         }}>
           {confirmation ? (
             <>
-              <h1>Reserva realizada com sucesso!</h1>
-              <VerifiedIcon color='success' fontSize='large' />
+              <Stack display={'flex'} justifyContent={'center'} alignItems={'center'}>
+                <h2 style={{ color: 'black', textAlign: 'center', paddingBottom: '10px' }}>Reserva realizada com sucesso!</h2>
+                <h5 style={{ color: 'black' }}>Reserva para:</h5>
+                <h4 style={{ color: 'black' }}>Dia: {String(selectedDate)}</h4>
+                <h4 style={{ color: 'black', paddingBottom: '10px' }}>Hora: {String(selectedTime)}</h4>
+                <VerifiedIcon sx={{ fontSize: '100px ' }} color='success' />
+              </Stack>
             </>
           ) : (
             <>
               <h2 style={{ color: 'black', textAlign: 'center' }}>Confirme os dados para sua reserva!</h2>
               <h5 style={{ color: 'black' }}>Reserva para:</h5>
-              <h4 style={{ color: 'black' }}>Dia: {selectedDate}</h4>
-              <h4 style={{ color: 'black' }}>Hora: {selectedTime}</h4>
+              <h4 style={{ color: 'black' }}>Dia: {String(selectedDate)}</h4>
+              <h4 style={{ color: 'black' }}>Hora: {String(selectedTime)}</h4>
               <TextField label="Nome" variant="outlined" onChange={(event) => setName(event)} />
               <TextField label="Telefone" variant="outlined" onChange={(event) => setPhone(event)} />
               <Button onClick={() => handleReservation()} variant="contained">Confirmar Reserva!</Button>

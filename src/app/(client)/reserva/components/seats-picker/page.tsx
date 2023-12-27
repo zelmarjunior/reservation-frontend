@@ -45,7 +45,6 @@ export default function TimePickerButtons() {
         setConfirmation(true);
       } else {
         setShowRecommendations(true);
-        
       }
     } else {
       throw new Error(response.statusText);
@@ -69,10 +68,10 @@ export default function TimePickerButtons() {
       <Stack direction="row" spacing={2} useFlexGap={true} sx={{ padding: '30px', backgroundColor: '#f6f6f6', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', minWidth: 350, maxWidth: 350, justifyContent: 'space-evenly', alignItems: 'center', borderRadius: '30px', marginTop: '30px' }}>
         <h2 style={{ color: 'black', paddingBottom: '30px', textAlign: 'center' }}>Quantos lugares seria?</h2>
         <FormControl sx={{ width: '120px' }}>
-          <InputLabel id="demo-simple-select-label">Lugares</InputLabel>
+          <InputLabel id="seats">Lugares</InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
+            labelId="seats"
+            id="seats"
             value={selectedSeats}
             label="Lugares"
             onChange={handleChange}

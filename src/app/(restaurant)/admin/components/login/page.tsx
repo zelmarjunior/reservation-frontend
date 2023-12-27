@@ -12,17 +12,67 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Fingerprint from '@mui/icons-material/Fingerprint';
 import { useRouter } from 'next/navigation';
+import { Button } from '@mui/material';
+import { useAdminContext } from '@/app/contexts/adminContext';
 
 export default function Login() {
   const [showPassword, setShowPassword] = React.useState(false);
+  const [name, setName] = React.useState();
+  const [password, setPassword] = React.useState();
   const router = useRouter();
-
+  const { setUserLogged } = useAdminContext();
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
 
+  const login = async () => {
+    console.log(process.env.AVAILABILITY_API_URL);
+
+    const response = await fetch("http://localhost:3333/admin/users/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: name,
+        password: password,
+        restaurantId: 1
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+
+      console.log(data);
+      
+
+/*       if (data) {
+        setUserLogged(true);
+      } else {
+        setUserLogged(false);
+      } */
+    } else {
+      throw new Error(response.statusText);
+    }
+  };
+
+  const handleLogin = async () => {
+    console.log(name, password);
+    if (!name || !password) return
+    //const isLogged = await login();
+
+    //router.push('/admin')
+  };
+
+  const onChangeName = (event) => {
+    setName(event.target.value)
+  }
+
+  const onChangePassword = (event) => {
+    setPassword(event.target.value)
+  }
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', minWidth: 300, width: '100%', justifyContent: 'center', alignItems: 'center', borderRadius: '30px', marginTop: '30px' }}>
       <h1 className={styles.login_title}>Login</h1>
@@ -49,10 +99,7 @@ export default function Login() {
           label="Password"
         />
       </FormControl>
-      <IconButton className={styles.icon_button} onClick={() => router.push('/admin')} aria-label="fingerprint" color="success">
-        <Fingerprint />
-        <p>Logar</p>
-      </IconButton>
+      <Button className={styles.icon_button} onClick={() => handleLogin()} aria-label="fingerprint" color="success">Logar</Button>
     </Box>
   )
 }
