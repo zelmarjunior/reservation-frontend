@@ -108,7 +108,7 @@ function getComparator<Key extends keyof any>(
 // with exampleArray.slice().sort(exampleComparator)
 function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
   console.log('miga', array);
-  
+
   const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -204,9 +204,9 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const { numSelected } = props;
   /*   const searchInputElement = React.useRef<HTMLInputElement>(); */
- /*  const [searchInputValue, setSearchInputValue] = React.useState(); */
+  /*  const [searchInputValue, setSearchInputValue] = React.useState(); */
   const [data, setData] = React.useState();
-  const { setSelectedDateToViewReservation} = useAdminContext();
+  const { setSelectedDateToViewReservation } = useAdminContext();
 
   React.useEffect(() => {
     console.log('Dataaaa', data);
@@ -287,11 +287,11 @@ export default function ReservationTable() {
 
   const API_URL = "http://localhost:3333/reservation/list";
 
-  const getTimes = async (selectedDateToViewReservation) => {
+  const getTimes = async () => {
     console.log('data do inciio do role', selectedDateToViewReservation)
-    const formattedDate = new Date(selectedDateToViewReservation);
+    const formattedDate = new Date(selectedDateToViewReservation).toLocaleDateString('pt-br', { year: "numeric", month: "numeric", day: "numeric" });;
 
-    console.log('Data selecionada na tabela', selectedDateToViewReservation);
+    console.log('Data selecionada na tabela', formattedDate);
 
     const response = await fetch(API_URL, {
       method: "POST",
@@ -299,7 +299,7 @@ export default function ReservationTable() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        date: selectedDateToViewReservation,
+        date: formattedDate,
         restaurantId: 1
       })
     });
@@ -308,17 +308,13 @@ export default function ReservationTable() {
       const reservationObject = await response.json();
       const reservationList = reservationObject.reservations;
       setReservations(reservationList);
-
-      console.log('Reservation List', reservationList)
     } else {
       throw new Error(response.statusText);
     }
   };
 
   React.useEffect(() => {
-    console.log('macadamiadasd', reservations)  
-    getTimes('2023-12-26');
-    console.log('macadamia', reservations)  
+    getTimes();
   }, [reservations])
 
   const handleRequestSort = (
@@ -332,7 +328,6 @@ export default function ReservationTable() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      console.log('o caraio', selectedDateToViewReservation)
       const newSelected = reservations?.map((n) => n.id);
       setSelected(newSelected);
       return;
@@ -413,7 +408,7 @@ export default function ReservationTable() {
             <TableBody>
               {visibleRows.map((row, index) => {
                 console.log('maaaaaa', row, index);
-                
+
                 const isItemSelected = isSelected(row.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 

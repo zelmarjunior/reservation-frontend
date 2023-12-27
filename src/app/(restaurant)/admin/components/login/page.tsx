@@ -44,15 +44,12 @@ export default function Login() {
 
     if (response.ok) {
       const data = await response.json();
-
       console.log(data);
-      
-
-/*       if (data) {
-        setUserLogged(true);
-      } else {
-        setUserLogged(false);
-      } */
+      /*       if (data) {
+              setUserLogged(true);
+            } else {
+              setUserLogged(false);
+            } */
     } else {
       throw new Error(response.statusText);
     }
@@ -61,22 +58,30 @@ export default function Login() {
   const handleLogin = async () => {
     console.log(name, password);
     if (!name || !password) return
-    //const isLogged = await login();
+    /*     try {
+          const isLogged = await login();
+          console.log('oiii', isLogged.token);
+          if (isLogged.token) {
+            router.push('/admin')
+          }
+        } catch (error) {
+          console.error('Erro ao realizar o login.');
+        }
+     */
 
-    //router.push('/admin')
   };
 
-  const onChangeName = (event) => {
-    setName(event.target.value)
-  }
-
-  const onChangePassword = (event) => {
-    setPassword(event.target.value)
-  }
+  /*   const onChangeName = (event) => {
+      setName(event.target.value)
+    }
+  
+    const onChangePassword = (event) => {
+      setPassword(event.target.value)
+    } */
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', minWidth: 300, width: '100%', justifyContent: 'center', alignItems: 'center', borderRadius: '30px', marginTop: '30px' }}>
       <h1 className={styles.login_title}>Login</h1>
-      <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
+      <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined" >
         <TextField id="outlined-basic" label="User" variant="outlined" />
       </FormControl>
       <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
@@ -99,7 +104,7 @@ export default function Login() {
           label="Password"
         />
       </FormControl>
-      <Button className={styles.icon_button} onClick={() => handleLogin()} aria-label="fingerprint" color="success">Logar</Button>
+      <Button className={styles.icon_button} onClick={() => handleLogin()} aria-label="Login" color="success">Logar</Button>
     </Box>
   )
 }

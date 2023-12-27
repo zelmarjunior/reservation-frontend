@@ -91,7 +91,7 @@ export default function ReservationModal(props) {
 
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', minWidth: 300, width: '100%', justifyContent: 'center', alignItems: 'center', borderRadius: '30px', marginTop: '30px' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', minWidth: 300, width: '90%%', justifyContent: 'center', alignItems: 'center', borderRadius: '30px', marginTop: '30px' }}>
       <Modal
         open={open}
         onClose={handleClose}
@@ -103,7 +103,7 @@ export default function ReservationModal(props) {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 400,
+          width: '70%',
           bgcolor: 'background.paper',
           borderRadius: '6px',
           boxShadow: 24,
